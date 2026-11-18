@@ -2,12 +2,134 @@
 <html>
     <head>
         <title>cocoa</title>
+        <style>
+            #keypad-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.5);
+                align-items: center;
+                justify-content: center;
+            }
+            #keypad-overlay.open {
+                display: flex;
+            }
+            #keypad {
+                background: white;
+                border: 1px solid black;
+                padding: 1em;
+                text-align: center;
+            }
+            #keypad-display {
+                font-size: 2em;
+                min-height: 1.2em;
+            }
+            #keypad-message {
+                min-height: 1.2em;
+                color: red;
+            }
+            #keypad-keys {
+                display: grid;
+                grid-template-columns: repeat(3, auto);
+                gap: 0.5em;
+                justify-content: center;
+            }
+            #keypad-keys button {
+                width: 3em;
+                height: 3em;
+                padding: 0;
+                border-radius: 50%;
+            }
+            #keypad-close {
+                margin-top: 1em;
+            }
+            #secret {
+                display: none;
+                max-width: 100%;
+            }
+        </style>
     </head>
     <body>
         <h1>cocoa</h1>
         <p>mmm... what's better than a nice, hot cup of cocoa? i can't imagine a single thing. i just love me a warm, nice, hot cup of cocoa before bed. mmm... i just got a bit on my lip. gosh, i'm so messy. i think i need you to help clean it up. yeahhh lick my lip. mmm. taste the hot cocoa. yeah. good boy.
         </p>
         <img src="./IMG_5421.jpeg" alt="a nice, hot cup of cocoa" />
+
+        <br>
+        <img id="secret" src="./IMG_4927.JPG" alt="nudes" />
+        <button id="nudes-button">nudes</button>
+
+        <div id="keypad-overlay">
+            <div id="keypad">
+                <div id="keypad-display"></div>
+                <div id="keypad-message"></div>
+                <div id="keypad-keys">
+                    <button data-key="1">1</button>
+                    <button data-key="2">2</button>
+                    <button data-key="3">3</button>
+                    <button data-key="4">4</button>
+                    <button data-key="5">5</button>
+                    <button data-key="6">6</button>
+                    <button data-key="7">7</button>
+                    <button data-key="8">8</button>
+                    <button data-key="9">9</button>
+                    <button data-key="back">&#9003;</button>
+                    <button data-key="0">0</button>
+                    <button data-key="enter">&#10003;</button>
+                </div>
+                <button id="keypad-close">cancel</button>
+            </div>
+        </div>
+
+        <script>
+            const PASSWORD = "6767";
+            const overlay = document.getElementById("keypad-overlay");
+            const display = document.getElementById("keypad-display");
+            const message = document.getElementById("keypad-message");
+            const secret = document.getElementById("secret");
+            let entered = "";
+
+            function render() {
+                display.textContent = "•".repeat(entered.length);
+            }
+
+            function submit() {
+                if (entered === PASSWORD) {
+                    overlay.classList.remove("open");
+                    secret.style.display = "block";
+                    secret.scrollIntoView({ behavior: "smooth" });
+                } else {
+                    message.textContent = "wrong password";
+                    entered = "";
+                    render();
+                }
+            }
+
+            document.getElementById("nudes-button").addEventListener("click", () => {
+                entered = "";
+                message.textContent = "";
+                render();
+                overlay.classList.add("open");
+            });
+
+            document.getElementById("keypad-close").addEventListener("click", () => {
+                overlay.classList.remove("open");
+            });
+
+            document.getElementById("keypad-keys").addEventListener("click", (e) => {
+                const key = e.target.dataset.key;
+                if (!key) return;
+                message.textContent = "";
+                if (key === "back") {
+                    entered = entered.slice(0, -1);
+                } else if (key === "enter") {
+                    submit();
+                    return;
+                } else if (entered.length < 10) {
+                    entered += key;
+                }
+                render();
+            });
+        </script>
     </body>
 </html>
-
